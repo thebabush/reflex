@@ -1,0 +1,16 @@
+subs/
+data/
+stroz/
+test.sh
+.ipynb_checkpoints/
+*.pyc
+__pycache__/
+ram/
+gen.rs
+*.so
+afl-proto/
+afl-proto-orig/
+mutator/
+.idea/
+rust-mutator/target/
+workdir/
