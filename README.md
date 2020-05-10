@@ -123,4 +123,6 @@ Programs that I know of using flex/bison:
 - AutoIt's Au3check and malware using AutoIt
 - Autodesk Maya: libOGSDeviceOGL4.dylib
 - Unity: libunity.so (probably for shaders)
-- A bunch of open source projects (not interesting)
+- VxWorks: has a C interpreter written in flex/bison (WTF... if you know why there's such thing, tell me in an issue)
+- Zyxel: the shell of some routers (e.g.: `WAC6103D-I_5.50(AAXH.3)C0`)
+- A lot of open source projects (not interesting)
