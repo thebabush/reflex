@@ -119,7 +119,7 @@ object Simple {
       // TESTED (a|b?)+ => (a|b)*
       case OneOrMore(Or(a, Optional(b))) => Star(Or(a, b))
       // TESTED (a?|b?)+ => (a|b)*
-      case OneOrMore(Or(Optional(a), Optional(b))) => Star(Or(a, b))
+      //case OneOrMore(Or(Optional(a), Optional(b))) => Star(Or(a, b)) // UNREACHABLE
       /* Kinda expensive */
       // TESTED aa* => a+
       case Then(r, Star(s)) if r == s => OneOrMore(r)
@@ -140,6 +140,27 @@ object Simple {
       /* Ad-hoc */
       // TESTED ((a?|aa))* => a*
       case Star(Or(Optional(a), Then(b, c))) if a == b && b == c => Star(a)
+      // a|ac => ac?
+      case Or(a, Then(b, c)) if a == b => Then(a, Optional(c))
+      // (a+)? => a*
+      case Optional(OneOrMore(a)) => Star(a)
+      // (a?)* => a*
+      case Star(Optional(a)) => Star(a)
+      // abb* => ab+
+      case Then(Then(a, b), Star(c)) if b == c => Then(a, OneOrMore(b))
+      // ab+|acb+ => ac?b+
+      case Or(Then(a, OneOrMore(b)), Then(Then(c, d), OneOrMore(e)))
+        //if a == c && b == e => Then(Then(c, Optional(d)), OneOrMore(e))
+        if a == c && b == e => Then(c, Then(Optional(d), OneOrMore(e)))
+      // qr
+      case Then(Then(q, Then(r, a)), Star(b)) if a == b
+        => Then(q, Then(r, OneOrMore(a)))
+      // xaa*y => xa+y
+      case Then(Then(x, a), Then(Star(b), y)) if a == b
+        => Then(x, Then(OneOrMore(a), y))
+      // ab | ac => a(b|c)
+      case Or(Then(a, b), Then(Then(c, d), e)) if c == a
+        => Then(a, Or(b, Then(d, e)))
       /* No simplification */
       case r => modified = false; r
     }

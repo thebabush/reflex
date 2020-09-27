@@ -23,8 +23,8 @@ echo "=== STAGE 0 ==="
 echo "=== STAGE 1 ==="
 
 echo "SCALA"
-parallel -j 12 echo print {} ';' ./scala/jreflex.sh print "{}.regexp" "{}" ::: ../flex/autoit/out/*.dfa
+parallel -j 12 echo print {} ';' ./scala/jreflex.sh print "{}.regexp" "{}" ::: ../flex/sleigh/out/*.dfa
 
-echo "PROTO"
-./scala/jreflex.sh proto ../flex/sleigh/out/out.proto ../flex/sleigh/out/*.dfa
+#echo "PROTO"
+#./scala/jreflex.sh proto ../flex/sleigh/out/out.proto ../flex/sleigh/out/*.dfa
 

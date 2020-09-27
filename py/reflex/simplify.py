@@ -21,7 +21,7 @@ def write_dfa(fp, g, start):
         f.write('{}\n'.format(start))
         f.write('{}\n'.format(len(g.nodes)))
         for n, data in g.nodes(data=True):
-            f.write('{} {}\n'.format(n, 1 if data['accepts'] > 1 else 0))
+            f.write('{} {}\n'.format(n, 1 if data['accepts'] >= 1 else 0))
 
         edges = []
         for u, v, data in g.edges(data=True):
@@ -41,7 +41,7 @@ def write_dfa(fp, g, start):
         f.write('{}\n'.format(start))
         f.write('{}\n'.format(len(g.nodes)))
         for n, data in g.nodes(data=True):
-            f.write('{} {}\n'.format(n, 1 if data['accepts'] > 1 else 0))
+            f.write('{} {}\n'.format(n, 1 if data['accepts'] >= 1 else 0))
         f.write('{}\n'.format(len(g.edges)))
         for u, v, data in g.edges(data=True):
             f.write('{} {} {}\n'.format(
@@ -60,7 +60,7 @@ def simplify(g_pickle_path, out_path):
     max_accepts = functools.reduce(lambda x, y: max(x, y[1]['accepts']), G.nodes(data=True), 0) + 1
     print('max_accepts:', max_accepts)
 
-    for out in range(2, max_accepts):
+    for out in range(1, max_accepts):
         out_nodes = set()
         r = R.copy()
         for n, data in r.nodes(data=True):
@@ -78,14 +78,10 @@ def simplify(g_pickle_path, out_path):
         # print(r2.copy())
         for n, data in r2.nodes(data=True):
             accepts = data['accepts']
-            if accepts > 0:
-                if accepts < out:
-                    data['accepts'] = out
-                    data['label'] += '/{}'.format(out)
-                elif accepts > out:
-                    data['accepts'] = 0
-                    data['label'] += '/None'
-                    del data['shape']
+            if accepts > 0 and accepts != out:
+                data['accepts'] = 0
+                data['label'] += '/None'
+                del data['shape']
 
         # Write the simplified graph as dot-file
         networkx.drawing.nx_agraph.write_dot(r2, os.path.join(out_path, '{}.dot'.format(out)))

@@ -24,7 +24,7 @@ object Pretty {
     def ppr(s: String): StringBuilder = {
       var sb = new StringBuilder()
 
-      if (s.equals((1 to 255).mkString)) {
+      if (s.equals((1.asInstanceOf[Char] to 255).mkString)) {
         sb += '.'
       } else if (s.length > 0x80) {
         sb ++= "[^"
