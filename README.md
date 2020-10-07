@@ -81,6 +81,25 @@ Just know that in order to build you'll have to wait **A LOT**.
 ./scala/jreflex.sh rust ./rust-mutator/src/gen.rs ./workdir/simple/*.dfa
 ```
 
+## Ghidra Script
+
+I made a quickly hacked ghidra script to export `yylex` data flow into graphviz
+and graphml files.
+The latter can be used together with `find-tables.sh` to (hopefully) recover
+the tables from the binary automatically.
+It doesn't always work (ghidra's IR is funky), but even when it fails it can
+recover at least some of the tables.
+
+Instructions:
+
+1. `cp ./ghidra/Reflex.java ~/ghidra_script/`
+2. Open ghidra
+3. Navigate to `yylex()` in your binary
+4. Run the script
+   (it will create `/tmp/out.xml`, `/tmp/out.dot` and `/tmp/simple.dot`)
+5. Run `scala/find-tables.sh` and it should output the arguments to forward to
+   `reflex.py`
+
 ## A bit of history
 
 This was all part of a PhD at Politecnico di Milano, that I dropped :D
