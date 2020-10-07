@@ -161,6 +161,11 @@ object Simple {
       // ab | ac => a(b|c)
       case Or(Then(a, b), Then(Then(c, d), e)) if c == a
         => Then(a, Or(b, Then(d, e)))
+      // ab|a => ab?
+      case Or(Then(a, b), c) if a == c => Then(a, Optional(b))
+      // [...]|x => [...x]
+      case Or(RESet(xs), Literal(x)) => RESet(xs + x)
+      case Or(Literal(x), RESet(xs)) => RESet(xs + x)
       /* No simplification */
       case r => modified = false; r
     }
