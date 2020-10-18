@@ -18,6 +18,7 @@ case class Json()  extends Command
 case class Print() extends Command
 case class Proto() extends Command
 case class Rust()  extends Command
+case class Gen()  extends Command
 
 
 case class Config(
@@ -66,6 +67,9 @@ object Main {
         cmd("rust")
           .action((_, c) => c.copy(command = Rust()))
           .text("prints a rust definition of the regexp"),
+        cmd("gen")
+          .action((_, c) => c.copy(command = Gen()))
+          .text("generate a valid token"),
       )
     }
     OParser.parse(parser, args, Config()) match {
@@ -111,7 +115,7 @@ object Main {
         if (IS_DEBUGGING) {
           println(out)
         }
-        Files.writeString(config.out.toPath, out.toString())
+        Files.writeString(config.out.toPath, out.toString() + "\n")
       case Json() =>
         val dfa = parse(config.files.head)
         val regexp = DfaToRegex.hopcroft(dfa)
@@ -135,6 +139,10 @@ object Main {
           println(out)
         }
         Files.writeString(config.out.toPath, out)
+      case Gen() =>
+        val dfa = parse(config.files.head)
+        val regexp = DfaToRegex.hopcroft(dfa)
+        println(Generator.generate(regexp))
     }
   }
 
