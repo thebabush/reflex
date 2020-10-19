@@ -11,6 +11,7 @@ import io.circe.syntax._
 import scopt.OParser
 
 import scala.jdk.CollectionConverters._
+import scala.util.Random
 
 
 sealed trait Command
@@ -140,9 +141,10 @@ object Main {
         }
         Files.writeString(config.out.toPath, out)
       case Gen() =>
-        val dfa = parse(config.files.head)
-        val regexp = DfaToRegex.hopcroft(dfa)
-        println(Generator.generate(regexp))
+        val regexps = config.files.map(f => DfaToRegex.hopcroft(parse(f)))
+        while (true) {
+          println(Generator.generate(regexps(Random.nextInt(regexps.length))))
+        }
     }
   }
 
