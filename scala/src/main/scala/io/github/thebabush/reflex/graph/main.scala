@@ -81,21 +81,21 @@ object main {
       .in.has(CouldBeTable, true).as(YyBase)
       // Go back to where we were before
       .select(Tmp0)
-      .out.has(OpMnemonic, "CAST")
+      .optional(_.out.has(OpMnemonic, "CAST"))
       // Tag the load so we will be able to get its size
       .out.has(OpMnemonic, "LOAD").as(YyBaseLoad)
       // Skip integer operations
       .repeat(_.out.has(OpMnemonic, P.within(Seq("INT_SEXT", "INT_ADD")))).emit()
       .as(Tmp1)
       // Go look for a phi(class)
-      .in.has(OpMnemonic, P.within(Seq("INT_ZEXT")))
+      .optional(_.in.has(OpMnemonic, P.within(Seq("INT_ZEXT"))))
       .in.has(OpMnemonic, "MULTIEQUAL")
       .as(ClassPhi)
       // Look for the first ptr (referring to either yy_chk or yy_nxt)
       .select(Tmp1)
       .optional(_.out.has(OpMnemonic, "CAST"))
       // (AND used as a way to trunc values... blame ghidra)
-      .repeat(_.out.has(OpMnemonic, P.within(Seq("INT_AND", "INT_SEXT", "INT_MULT")))).emit()
+      .repeat(_.out.has(OpMnemonic, P.within(Seq("INT_AND", "INT_SEXT", "INT_MULT", "INT_ZEXT")))).emit()
       .out.has(OpMnemonic, P.within(PTR_OPS))
       .as(Tmp2)
       // Look for the other table
@@ -187,9 +187,9 @@ object main {
       .in.has(CouldBeTable, true).as(YyEc)
       // Disambiguate yy_ec from yy_meta
       .select(YyEcLoad)
-//      .optional(_.out.has(OpMnemonic, "MULTILABEL")) // HACK
+      .optional(_.out.has(OpMnemonic, "MULTILABEL")) // HACK
       .repeat(_.in.has(OpMnemonic, P.within(PTR_OPS))).emit()
-      .repeat(_.in.has(OpMnemonic, P.within(Seq("INT_SEXT", "INT_ZEXT", "CAST")))).emit()
+      .repeat(_.in.has(OpMnemonic, P.within(Seq("INT_SEXT", "INT_ZEXT", "INT_MULT", "CAST")))).emit()
       .in.has(OpMnemonic, "LOAD")
     //println(queryEcMetaMaxState.clone.path.toIterator.mkString("\n"))
     val queryEc = queryEcMetaMaxState.clone
